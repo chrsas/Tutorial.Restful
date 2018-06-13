@@ -56,6 +56,13 @@ namespace Tutorial.Restful
             // TODO: 存在问题
             Console.WriteLine($"Start up configure key3: {key3Options.Value.ChildKey1}");
 
+            app.UseStatusCodePages(async context =>
+            {
+                context.HttpContext.Response.ContentType = "text/plain";
+                await context.HttpContext.Response.WriteAsync(
+                    $"My status page, status code is: {context.HttpContext.Response.StatusCode}");
+            });
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -78,11 +85,6 @@ namespace Tutorial.Restful
                 });
 
             app.UseMvc();
-
-            app.Run(async (context) =>
-            {
-                await context.Response.WriteAsync("Hello World!");
-            });
         }
     }
 }
