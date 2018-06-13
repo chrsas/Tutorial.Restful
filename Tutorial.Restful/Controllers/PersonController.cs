@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
+using Tutorial.Restful.Controllers.Dto;
 
 namespace Tutorial.Restful.Controllers
 {
@@ -12,15 +14,31 @@ namespace Tutorial.Restful.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet("{id}")]
-        public ActionResult<string> Index(int id)
+        public ActionResult<string> Get(int id)
         {
             return Ok("person");
         }
 
-        [NonAction]
-        public ActionResult<DateTime> GetTime()
+        [HttpGet]
+        public List<PersonDto> Get(string name)
         {
-            return Ok(DateTime.Now);
+            return new List<PersonDto>() {
+                new PersonDto
+                {
+                    Id = 1,
+                    Name = "王二",
+                }, new PersonDto
+                {
+                    Id = 2,
+                    Name = "张三",
+                } };
+        }
+
+        public IActionResult Post([FromBody]PersonDto person)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+            return Ok();
         }
     }
 }
