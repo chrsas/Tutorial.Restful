@@ -9,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using NJsonSchema;
 using NSwag.AspNetCore;
 using System.Reflection;
+using Tutorial.Restful.Filters;
 
 namespace Tutorial.Restful
 {
@@ -18,7 +19,7 @@ namespace Tutorial.Restful
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc();
+            services.AddMvc(options => { options.Filters.Add<DefaultNameFilter>(); });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
