@@ -11,6 +11,7 @@ using NSwag.AspNetCore;
 using System.Reflection;
 using Tutorial.Restful.Filters;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Tutorial.Restful.Configurations;
 
@@ -20,20 +21,22 @@ namespace Tutorial.Restful
     {
         public IConfiguration Configuration { get; set; }
 
-        public Startup(IConfiguration configuration)
+        private readonly ILoggerFactory _loggerFactory;
+
+        public Startup(IConfiguration configuration, ILoggerFactory loggerFactory)
         {
             Configuration = configuration;
+            _loggerFactory = loggerFactory;
+            var constructorLogger = _loggerFactory.CreateLogger($"{nameof(Startup)}.Constructor");
+            constructorLogger.LogInformation(1, "来自Startup.cs的构造函数的日志");
         }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            Console.WriteLine($"Startup 中 ：");
-            foreach (var item in Configuration.AsEnumerable())
-            {
-                System.Console.WriteLine($"Key: {item.Key}, Value: {item.Value}");
-            }
+            var methodLogger = _loggerFactory.CreateLogger($"Startup.ConfigureServices");
+            methodLogger.LogInformation(2, "来自Startup.cs的ConfigureServices的日志");
 
             services.Configure<FirstConfig>(Configuration);
 
@@ -43,9 +46,11 @@ namespace Tutorial.Restful
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env,
             IOptions<FirstConfig> firstConfig,
-            IOptionsSnapshot<FirstConfig.Key3Options> key3Options)
+            IOptionsSnapshot<FirstConfig.Key3Options> key3Options,
+            ILogger<Startup> logger)
         {
-            Console.WriteLine($"Start Up Configure key1: {firstConfig.Value.Key1}");
+            logger.LogDebug($"Start Up Configure key1: {firstConfig.Value.Key1}");
+            logger.LogInformation($"Start Up Configure key1: {firstConfig.Value.Key1}");
 
 
             // TODO: 存在问题
