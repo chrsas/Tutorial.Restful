@@ -43,10 +43,12 @@ namespace Tutorial.Restful
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env,
             IOptions<FirstConfig> firstConfig,
-            IOptions<FirstConfig.Key3Options> key3Options)
+            IOptionsSnapshot<FirstConfig.Key3Options> key3Options)
         {
             Console.WriteLine($"Start Up Configure key1: {firstConfig.Value.Key1}");
 
+
+            // TODO: 存在问题
             Console.WriteLine($"Start up configure key3: {key3Options.Value.ChildKey1}");
 
             if (env.IsDevelopment())
