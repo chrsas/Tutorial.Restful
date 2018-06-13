@@ -15,7 +15,12 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.1.0" />
     <PackageReference Include="NSwag.AspNetCore" Version="11.17.13" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Tutorial.Restful.Data\Tutorial.Restful.Data.csproj" />
   </ItemGroup>
 
 </Project>

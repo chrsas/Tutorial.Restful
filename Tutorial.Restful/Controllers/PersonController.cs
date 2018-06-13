@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using Tutorial.Restful.Controllers.Dto;
 
-namespace Tutorial.Restful.Controllers
+namespace Tutorial.Restful.Host.Controllers
 {
     [Route("api/[controller]s")]
     public class PersonController : Controller

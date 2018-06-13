@@ -6,8 +6,10 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Tutorial.Restful.Configurations;
+using Tutorial.Restful.Data;
 
 namespace Tutorial.Restful
 {
@@ -19,7 +21,24 @@ namespace Tutorial.Restful
         {
             DealWithConfiguration();
 
-            CreateWebHostBuilder(args).Build().Run();
+            var host = CreateWebHostBuilder(args).Build();
+            using (var scope = host.Services.CreateScope())
+            {
+                var services = scope.ServiceProvider;
+                var loggerFactory = services.GetRequiredService<ILoggerFactory>();
+                try
+                {
+                    var restfulContext = services.GetRequiredService<RestfulContext>();
+                    RestfulContextSeed.SeedAsync(restfulContext, loggerFactory).Wait();
+                }
+                catch (Exception e)
+                {
+                    var logger = loggerFactory.CreateLogger<Program>();
+                    logger.LogError(e, "增加种子数据的时候发生异常");
+                }
+            }
+
+            host.Run();
         }
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>

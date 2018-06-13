@@ -9,11 +9,13 @@ using Microsoft.Extensions.DependencyInjection;
 using NJsonSchema;
 using NSwag.AspNetCore;
 using System.Reflection;
+using Microsoft.EntityFrameworkCore;
 using Tutorial.Restful.Filters;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Tutorial.Restful.Configurations;
+using Tutorial.Restful.Data;
 
 namespace Tutorial.Restful
 {
@@ -39,6 +41,13 @@ namespace Tutorial.Restful
             methodLogger.LogInformation(2, "来自Startup.cs的ConfigureServices的日志");
 
             services.Configure<FirstConfig>(Configuration);
+
+            services.AddDbContext<RestfulContext>(options =>
+            {
+                // Memory模式 名字随便取
+                options.UseInMemoryDatabase("RestfulDatabase");
+                options.UseLoggerFactory(_loggerFactory);
+            });
 
             services.AddMvc(options => { options.Filters.Add<DefaultNameFilter>(); });
         }
