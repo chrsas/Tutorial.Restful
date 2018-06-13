@@ -7,6 +7,7 @@ using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Tutorial.Restful.Configurations;
 
 namespace Tutorial.Restful
 {
@@ -29,10 +30,17 @@ namespace Tutorial.Restful
         {
             var configBuilder = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("FirstConfig.json")
-                .AddJsonFile("SecondConfig.json");
+                .AddJsonFile("Configurations\\FirstConfig.json")
+                .AddJsonFile("Configurations\\SecondConfig.json");
+
+            var firstConfig = new FirstConfig();
+
 
             Configuration = configBuilder.Build();
+            Configuration.Bind(firstConfig);
+
+            Console.WriteLine($"FirstConfig class Key1: {firstConfig.Key1}");
+            Console.WriteLine($"FirstConfig class ChildKey1: {firstConfig.Key3.ChildKey1}");
 
             foreach (var item in Configuration.AsEnumerable())
             {

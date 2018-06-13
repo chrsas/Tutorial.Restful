@@ -10,21 +10,45 @@ using NJsonSchema;
 using NSwag.AspNetCore;
 using System.Reflection;
 using Tutorial.Restful.Filters;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
+using Tutorial.Restful.Configurations;
 
 namespace Tutorial.Restful
 {
     public class Startup
     {
+        public IConfiguration Configuration { get; set; }
+
+        public Startup(IConfiguration configuration)
+        {
+            Configuration = configuration;
+        }
+
         // This method gets called by the runtime. Use this method to add services to the container.
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            Console.WriteLine($"Startup 中 ：");
+            foreach (var item in Configuration.AsEnumerable())
+            {
+                System.Console.WriteLine($"Key: {item.Key}, Value: {item.Value}");
+            }
+
+            services.Configure<FirstConfig>(Configuration);
+
             services.AddMvc(options => { options.Filters.Add<DefaultNameFilter>(); });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env,
+            IOptions<FirstConfig> firstConfig,
+            IOptions<FirstConfig.Key3Options> key3Options)
         {
+            Console.WriteLine($"Start Up Configure key1: {firstConfig.Value.Key1}");
+
+            Console.WriteLine($"Start up configure key3: {key3Options.Value.ChildKey1}");
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
