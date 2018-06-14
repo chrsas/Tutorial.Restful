@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -54,6 +55,12 @@ namespace Tutorial.Restful.Host.Controllers
             if (country == null)
                 return NotFound();
             return Ok(_mapper.Map<CountryDto>(country));
+        }
+
+        [HttpGet("exception")]
+        public IActionResult GetException()
+        {
+            throw new Exception("");
         }
     }
 }

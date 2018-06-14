@@ -84,6 +84,17 @@ namespace Tutorial.Restful
             {
                 app.UseDeveloperExceptionPage();
             }
+            else
+            {
+                app.UseExceptionHandler(builder =>
+                {
+                    builder.Run(async context =>
+                    {
+                        context.Response.StatusCode = 500;
+                        await context.Response.WriteAsync("An error occurred");
+                    });
+                });
+            }
 
             app.UseStaticFiles();
 
