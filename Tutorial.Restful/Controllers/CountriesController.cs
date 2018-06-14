@@ -29,7 +29,6 @@ namespace Tutorial.Restful.Host.Controllers
         }
 
         [HttpPost]
-
         public IActionResult Post([FromBody]CountryDto countryDto)
         {
             if (_countryRepository.GetAll().Any(c => c.EnglishName == countryDto.EnglishName))
@@ -46,6 +45,13 @@ namespace Tutorial.Restful.Host.Controllers
         public async Task<IEnumerable<CountryDto>> Get()
         {
             return _mapper.Map<IEnumerable<CountryDto>>(await _countryRepository.GetAll().ToListAsync());
+        }
+
+        [HttpGet("{id}")]
+        public CountryDto Get(int id)
+        {
+            var country = _countryRepository.GetAll().FirstOrDefault(c => c.Id == id);
+            return _mapper.Map<CountryDto>(country);
         }
     }
 }
