@@ -9,6 +9,8 @@ namespace Tutorial.Restful.Host.Configurations
         public MappingProfile()
         {
             CreateMap<Country, CountryDto>().ReverseMap();
+
+            CreateMap<CityDto, City>().ForMember(desc => desc.Country, options => { options.Ignore(); });
         }
     }
 }

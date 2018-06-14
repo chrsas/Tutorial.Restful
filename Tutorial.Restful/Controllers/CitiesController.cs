@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Tutorial.Restful.Controllers.Dto;
 using Tutorial.Restful.Data;
+using Tutorial.Restful.Domain;
 using Tutorial.Restful.Domain.Models;
 using Tutorial.Restful.Domain.Repositories;
 
@@ -19,12 +20,14 @@ namespace Tutorial.Restful.Host.Controllers
         private readonly ICityRepository _cityRepository;
         private readonly ICountryRepository _countryRepository;
         private readonly IMapper _mapper;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public CitiesController(ICityRepository cityRepository, ICountryRepository countryRepository, IMapper mapper)
+        public CitiesController(ICityRepository cityRepository, ICountryRepository countryRepository, IMapper mapper, IUnitOfWork unitOfWork)
         {
             _cityRepository = cityRepository;
             _countryRepository = countryRepository;
             _mapper = mapper;
+            _unitOfWork = unitOfWork;
         }
 
         // GET: api/Cities
@@ -87,20 +90,25 @@ namespace Tutorial.Restful.Host.Controllers
         //    return NoContent();
         //}
 
-        //// POST: api/Cities
-        //[HttpPost]
-        //public async Task<IActionResult> PostCity([FromBody] City city)
-        //{
-        //    if (!ModelState.IsValid)
-        //    {
-        //        return BadRequest(ModelState);
-        //    }
+        // POST: api/Cities
+        [HttpPost]
+        public async Task<IActionResult> PostCity([FromRoute]int countryId, [FromBody] CityDto cityDto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
 
-        //    _cityRepository.Cities.Add(city);
-        //    await _cityRepository.SaveChangesAsync();
+            if (!await _countryRepository.GetAll().AnyAsync(c => c.Id == countryId))
+                return NotFound();
 
-        //    return CreatedAtAction("GetCity", new { id = city.Id }, city);
-        //}
+            var city = _mapper.Map<City>(cityDto);
+            city.CountryId = countryId;
+            _cityRepository.Insert(city);
+            await _unitOfWork.SaveChangesAsync();
+            cityDto = _mapper.Map<CityDto>(city);
+            return CreatedAtAction("GetCity", new { countryId, cityId = cityDto.Id }, cityDto);
+        }
 
         //// DELETE: api/Cities/5
         //[HttpDelete("{id}")]

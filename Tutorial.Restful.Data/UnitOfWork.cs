@@ -12,7 +12,7 @@ namespace Tutorial.Restful.Data
             _restfulContext = restfulContext;
         }
 
-        public async Task<int> SaveAsync()
+        public async Task<int> SaveChangesAsync()
         {
             return await _restfulContext.SaveChangesAsync();
         }

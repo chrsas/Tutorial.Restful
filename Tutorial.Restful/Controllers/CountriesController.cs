@@ -43,7 +43,7 @@ namespace Tutorial.Restful.Host.Controllers
 
             var country = _mapper.Map<Country>(countryDto);
             _countryRepository.Insert(country);
-            await _unitOfWork.SaveAsync();
+            await _unitOfWork.SaveChangesAsync();
             countryDto = _mapper.Map<CountryDto>(country);
             return CreatedAtAction("Get", new { id = country.Id }, countryDto);
         }
