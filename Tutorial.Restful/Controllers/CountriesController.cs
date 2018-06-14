@@ -30,17 +30,22 @@ namespace Tutorial.Restful.Host.Controllers
         }
 
         [HttpPost]
-        public IActionResult Post([FromBody]CountryDto countryDto)
+        public async Task<IActionResult> Post([FromBody]CountryDto countryDto)
         {
-            if (_countryRepository.GetAll().Any(c => c.EnglishName == countryDto.EnglishName))
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            if (await _countryRepository.GetAll().AnyAsync(c => c.EnglishName == countryDto.EnglishName))
             {
                 ModelState.AddModelError(nameof(CountryDto.EnglishName), $"已经存在名为 {countryDto.EnglishName} 的国家");
                 return BadRequest(ModelState);
             }
+
             var country = _mapper.Map<Country>(countryDto);
             _countryRepository.Insert(country);
-            _unitOfWork.SaveAsync().Wait();
-            return Ok();
+            await _unitOfWork.SaveAsync();
+            countryDto = _mapper.Map<CountryDto>(country);
+            return CreatedAtAction("Get", new { id = country.Id }, countryDto);
         }
 
         public async Task<IEnumerable<CountryDto>> Get()
