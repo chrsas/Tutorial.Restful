@@ -30,11 +30,17 @@ namespace Tutorial.Restful.Host.Controllers
 
         [HttpPost]
 
-        public void Post([FromBody]CountryDto countryDto)
+        public IActionResult Post([FromBody]CountryDto countryDto)
         {
+            if (_countryRepository.GetAll().Any(c => c.EnglishName == countryDto.EnglishName))
+            {
+                ModelState.AddModelError(nameof(CountryDto.EnglishName), $"已经存在名为 {countryDto.EnglishName} 的国家");
+                return BadRequest(ModelState);
+            }
             var country = _mapper.Map<Country>(countryDto);
             _countryRepository.Insert(country);
             _unitOfWork.SaveAsync().Wait();
+            return Ok();
         }
 
         public async Task<IEnumerable<CountryDto>> Get()
