@@ -17,6 +17,8 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Tutorial.Restful.Configurations;
 using Tutorial.Restful.Data;
+using Tutorial.Restful.Data.Repositories;
+using Tutorial.Restful.Domain.Repositories;
 
 namespace Tutorial.Restful
 {
@@ -53,6 +55,8 @@ namespace Tutorial.Restful
             services.AddMvc(options => { options.Filters.Add<DefaultNameFilter>(); });
 
             services.AddAutoMapper();
+
+            AddMyProject(services);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -97,6 +101,11 @@ namespace Tutorial.Restful
                 });
 
             app.UseMvc();
+        }
+
+        private void AddMyProject(IServiceCollection services)
+        {
+            services.AddScoped<ICountryRepository, CountryRepository>();
         }
     }
 }
