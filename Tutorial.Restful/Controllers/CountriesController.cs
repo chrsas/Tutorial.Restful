@@ -30,22 +30,24 @@ namespace Tutorial.Restful.Host.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody]CountryDto countryDto)
+        public async Task<IActionResult> Post([FromBody]CountryAddDto countryAddDto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            if (await _countryRepository.GetAll().AnyAsync(c => c.EnglishName == countryDto.EnglishName))
+            if (await _countryRepository.GetAll().AnyAsync(c => c.EnglishName == countryAddDto.EnglishName))
             {
-                ModelState.AddModelError(nameof(CountryDto.EnglishName), $"已经存在名为 {countryDto.EnglishName} 的国家");
+                ModelState.AddModelError(nameof(CountryDto.EnglishName), $"已经存在名为 {countryAddDto.EnglishName} 的国家");
                 return BadRequest(ModelState);
             }
 
-            var country = _mapper.Map<Country>(countryDto);
+            var country = _mapper.Map<Country>(countryAddDto);
             _countryRepository.Insert(country);
             await _unitOfWork.SaveChangesAsync();
-            countryDto = _mapper.Map<CountryDto>(country);
-            return CreatedAtAction("Get", new { id = country.Id }, countryDto);
+            var countryDto = _mapper.Map<CountryDto>(country);
+            // CreatedAtAction 会返回绝对路径，实际项目中绝对路径会被Api网关转换。
+            //return CreatedAtAction("Get", new { id = country.Id }, countryDto);
+            return Created(new Uri($"{Request.Path}/{countryDto.Id}", UriKind.Relative), countryDto);
         }
 
         public async Task<IEnumerable<CountryDto>> Get()
