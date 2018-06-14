@@ -19,5 +19,10 @@ namespace Tutorial.Restful.Data.Repositories
         {
             return _restfulContext.Countries;
         }
+
+        public Country Insert(Country country)
+        {
+            return _restfulContext.Countries.Add(country).Entity;
+        }
     }
 }

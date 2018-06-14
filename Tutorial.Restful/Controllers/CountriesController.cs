@@ -7,6 +7,7 @@ using Tutorial.Restful.Data;
 using Tutorial.Restful.Domain.Models;
 using System.Linq;
 using AutoMapper;
+using Tutorial.Restful.Domain;
 using Tutorial.Restful.Domain.Repositories;
 
 namespace Tutorial.Restful.Host.Controllers
@@ -18,10 +19,22 @@ namespace Tutorial.Restful.Host.Controllers
 
         private readonly ICountryRepository _countryRepository;
 
-        public CountriesController(IMapper mapper, ICountryRepository countryRepository)
+        private readonly IUnitOfWork _unitOfWork;
+
+        public CountriesController(IMapper mapper, ICountryRepository countryRepository, IUnitOfWork unitOfWork)
         {
             _mapper = mapper;
             _countryRepository = countryRepository;
+            _unitOfWork = unitOfWork;
+        }
+
+        [HttpPost]
+
+        public void Post([FromBody]CountryDto countryDto)
+        {
+            var country = _mapper.Map<Country>(countryDto);
+            _countryRepository.Insert(country);
+            _unitOfWork.SaveAsync().Wait();
         }
 
         public async Task<IEnumerable<CountryDto>> Get()

@@ -18,6 +18,7 @@ using Microsoft.Extensions.Options;
 using Tutorial.Restful.Configurations;
 using Tutorial.Restful.Data;
 using Tutorial.Restful.Data.Repositories;
+using Tutorial.Restful.Domain;
 using Tutorial.Restful.Domain.Repositories;
 
 namespace Tutorial.Restful
@@ -86,6 +87,8 @@ namespace Tutorial.Restful
 
             app.UseStaticFiles();
 
+            app.UseCors();
+
             // 开启Swagger UI 中间件和 Swagger generator
 
             app.UseSwaggerUi3(typeof(Startup).GetTypeInfo().Assembly, setting =>
@@ -103,9 +106,10 @@ namespace Tutorial.Restful
             app.UseMvc();
         }
 
-        private void AddMyProject(IServiceCollection services)
+        private static void AddMyProject(IServiceCollection services)
         {
             services.AddScoped<ICountryRepository, CountryRepository>();
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
         }
     }
 }
