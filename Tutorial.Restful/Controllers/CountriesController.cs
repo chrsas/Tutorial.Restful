@@ -6,6 +6,7 @@ using Tutorial.Restful.Controllers.Dto;
 using Tutorial.Restful.Data;
 using Tutorial.Restful.Domain.Models;
 using System.Linq;
+using AutoMapper;
 
 namespace Tutorial.Restful.Host.Controllers
 {
@@ -14,21 +15,17 @@ namespace Tutorial.Restful.Host.Controllers
     {
         private readonly RestfulContext _restfulContext;
 
-        public CountriesController(RestfulContext restfulContext)
+        private readonly IMapper _mapper;
+
+        public CountriesController(RestfulContext restfulContext, IMapper mapper)
         {
             _restfulContext = restfulContext;
+            _mapper = mapper;
         }
 
         public async Task<IEnumerable<CountryDto>> Get()
         {
-            return await _restfulContext.Countries.Select(c => new CountryDto
-            {
-                Id = c.Id,
-                Abbreviation = c.Abbreviation,
-                ChineseName = c.ChineseName,
-                Continent = c.Continent,
-                EnglishName = c.EnglishName
-            }).ToListAsync();
+            return _mapper.Map<IEnumerable<CountryDto>>(await _restfulContext.Countries.ToListAsync());
         }
     }
 }

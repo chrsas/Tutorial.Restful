@@ -9,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using NJsonSchema;
 using NSwag.AspNetCore;
 using System.Reflection;
+using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Tutorial.Restful.Filters;
 using Microsoft.Extensions.Configuration;
@@ -50,6 +51,8 @@ namespace Tutorial.Restful
             });
 
             services.AddMvc(options => { options.Filters.Add<DefaultNameFilter>(); });
+
+            services.AddAutoMapper();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
