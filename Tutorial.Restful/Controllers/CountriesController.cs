@@ -48,10 +48,12 @@ namespace Tutorial.Restful.Host.Controllers
         }
 
         [HttpGet("{id}")]
-        public CountryDto Get(int id)
+        public async Task<ActionResult<CountryDto>> Get(int id)
         {
-            var country = _countryRepository.GetAll().FirstOrDefault(c => c.Id == id);
-            return _mapper.Map<CountryDto>(country);
+            var country = await _countryRepository.GetAll().FirstOrDefaultAsync(c => c.Id == id);
+            if (country == null)
+                return NotFound();
+            return Ok(_mapper.Map<CountryDto>(country));
         }
     }
 }
