@@ -120,6 +120,8 @@ namespace Tutorial.Restful
         private static void AddMyProject(IServiceCollection services)
         {
             services.AddScoped<ICountryRepository, CountryRepository>();
+            services.AddScoped<ICityRepository, CityRepository>();
+
             services.AddScoped<IUnitOfWork, UnitOfWork>();
         }
     }
